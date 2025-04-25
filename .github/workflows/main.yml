@@ -2,8 +2,8 @@ name: Morning Assistant
 
 on:
   schedule:
-    - cron: '30 22 * * *'  # 6:30 AM AWST
-  workflow_dispatch:
+    - cron: '30 22 * * *'  # 6:30 AM AWST (UTC+8)
+  workflow_dispatch:       # Manual run button
 
 jobs:
   run-agent:
@@ -34,5 +34,5 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run assistant
+      - name: Run morning assistant
         run: python main.py
