@@ -1,13 +1,38 @@
-name: Morning Agent
+name: Morning Assistant
 
 on:
-  workflow_dispatch:
   schedule:
     - cron: '30 22 * * *'  # 6:30 AM AWST
+  workflow_dispatch:
 
 jobs:
-  test:
+  run-agent:
     runs-on: ubuntu-latest
+
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+
     steps:
-      - name: Say hi
-        run: echo "👋 Hello from GitHub Actions!"
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Restore credentials.json
+        run: echo "${{ secrets.CREDENTIALS_JSON }}" | base64 --decode > credentials.json
+
+      - name: Restore token.json
+        run: echo "${{ secrets.TOKEN_JSON }}" | base64 --decode > token.json
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run morning assistant
+        run: python main.py
